@@ -1,9 +1,17 @@
+import axios from "axios"
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
-
+axios.get("https://api.github.com/users/YourPersonalTechGuy")
+.then((res) => {
+  console.log(res.data);
+  cardCreator(res.data);
+})
+.catch((err) => {
+  console.log(err);
+})
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -28,7 +36,20 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ["radelmann", "bbalaran", "TheeSweeney", "vanleuvenze", "kartikvempati"];
+
+followersArray.forEach((item) => {
+  axios.get(`https://api.github.com/users/${item}`)
+    .then((res) => {
+      cardCreator(res.data);
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+})
+
+
+
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -49,6 +70,51 @@ const followersArray = [];
       </div>
     </div>
 */
+function cardCreator(obj){
+  let container = document.createElement("div");
+  container.classList = "card";
+  let pfp = document.createElement("img");
+  let infoContainer = document.createElement("div");
+  infoContainer.classList = "card-info";
+  let name = document.createElement("h3");
+  name.classList = "name";
+  let username = document.createElement("p");
+  username.classList = "username";
+  let location = document.createElement("p");
+  let profile = document.createElement("p");
+  let profileLink = document.createElement("a");
+  let followersCount = document.createElement("p");
+  let followingCount = document.createElement("p");
+  let bio = document.createElement("p");
+
+  infoContainer.appendChild(name);
+  infoContainer.appendChild(username);
+  infoContainer.appendChild(location);
+  infoContainer.appendChild(profile);
+  infoContainer.appendChild(followersCount);
+  infoContainer.appendChild(followingCount);
+  infoContainer.appendChild(bio);
+  container.appendChild(pfp);
+  container.appendChild(infoContainer);
+
+  pfp.setAttribute("src", obj.avatar_url);
+  pfp.setAttribute("alt", `Profile picture of ${obj.name}`);
+  name.textContent = obj.name;
+  username.textContent = obj.login;
+  location.textContent = obj.location;
+  profile.textContent = "Profile:";
+  profile.appendChild(profileLink);
+  profileLink.textContent = obj.html_url;
+  profileLink.setAttribute("href", obj.html_url);
+  followersCount.textContent = `Followers: ${obj.followers}`;
+  followingCount.textContent = `Following: ${obj.following}`;
+  bio.textContent = obj.bio;
+  document.querySelector(".cards").appendChild(container)
+  
+  return container;
+}
+
+
 
 /*
   List of LS Instructors Github username's:
